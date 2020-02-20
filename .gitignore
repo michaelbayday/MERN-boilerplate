@@ -7,7 +7,7 @@ config/config.js
 #API key
 environment.js
 
-# Node stuff
+# Node stuff lol
 node_modules
 .npm
 .node_repl_history
