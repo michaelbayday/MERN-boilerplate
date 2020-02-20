@@ -1,30 +1,34 @@
-import React from 'react';
-import { render } from 'react-dom';
+import React from "react";
+import { render } from "react-dom";
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Switch
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
-import App from './components/App/App';
-import NotFound from './components/App/NotFound';
+import { Provider } from "react-redux";
+import store from "./store";
 
-import Home from './components/Home/Home';
+import App from "./components/App";
+import NotFound from "./components/NotFound";
 
-import HelloWorld from './components/HelloWorld/HelloWorld';
+import HomeContainer from "./containers/HomePage";
+import UserManageAppointmentsContainer from "./containers/UserManageAppointments";
 
-import './styles/styles.scss';
+import "./styles/styles.scss";
 
-render((
-  <Router>
-    <App>
-      <Switch>
-        <Route exact path="/" component={Home}/>
-        <Route path="/helloworld" component={HelloWorld}/>
-        <Route component={NotFound}/>
-      </Switch>
-    </App>
-  </Router>
-), document.getElementById('app'));
+render(
+  <Provider store={store}>
+    <Router>
+      <App>
+        <Switch>
+          <Route exact path="/" component={HomeContainer} />
+          <Route
+            exact
+            path="/managemyappointments"
+            component={UserManageAppointmentsContainer}
+          />
+          <Route component={NotFound} />
+        </Switch>
+      </App>
+    </Router>
+  </Provider>,
+  document.getElementById("app")
+);
