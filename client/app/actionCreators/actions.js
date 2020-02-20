@@ -1,5 +1,12 @@
 import * as types from "../actionTypes/constants";
 
+export const loadAllAppointments = appointments => {
+  return {
+    type: types.LOAD_ALL_APPOINTMENTS,
+    payload: appointments
+  };
+};
+
 export const toggleAppointmentModal = show => {
   return {
     type: types.TOGGLE_APPOINTMENT_MODAL,
@@ -28,10 +35,13 @@ export const storeUserAppointmentInformation = appointments => {
   };
 };
 
-export const storeAppointmentInformation = id => {
+export const storeAppointmentInformation = (id, admin) => {
   return {
     type: types.STORE_APPOINTMENT_INFORMATION,
-    payload: id
+    payload: {
+      id,
+      admin
+    }
   };
 };
 
