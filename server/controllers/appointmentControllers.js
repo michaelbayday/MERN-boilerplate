@@ -16,7 +16,7 @@ appointmentControllers.updateAppointment = (req, res, next) => {
   const { comment } = req.body;
   let { date, time } = req.body;
   let amPm = time.slice(time.length - 2, time.length);
-  if (amPm === "PM" && Number(time.slice(0, 2)) > 12) {
+  if (amPm === "PM" && Number(time.slice(0, 2)) !== 12) {
     let hour = (Number(time.slice(0, 2)) + 12).toString().padStart(2, "0");
     time = hour + time.slice(2);
   }
@@ -24,7 +24,6 @@ appointmentControllers.updateAppointment = (req, res, next) => {
   date = date.slice(0, 33);
   date = moment(date).format("YYYY-MM-DD");
   const dateTime = date + " " + time;
-  console.log(time, date, comment, dateTime);
   Appointment.findOneAndUpdate(
     { _id: req.params.id },
     { time, date, dateTime, comment },
@@ -63,6 +62,14 @@ appointmentControllers.searchUser = (req, res, next) => {
 appointmentControllers.getAppointments = (req, res, next) => {
   if (res.locals.user) {
     Appointment.find({ user_id: res.locals.user.id }, (err, appointments) => {
+      const sortedAppointments = appointments.sort((a, b) => {
+        return a.dateTime > b.dateTime ? 1 : b.dateTime > a.dateTime ? -1 : 0;
+      });
+      res.locals.appointments = sortedAppointments;
+      return next();
+    });
+  } else {
+    Appointment.find({}, (err, appointments) => {
       const sortedAppointments = appointments.sort((a, b) => {
         return a.dateTime > b.dateTime ? 1 : b.dateTime > a.dateTime ? -1 : 0;
       });
@@ -111,7 +118,7 @@ appointmentControllers.createAppointment = (req, res, next) => {
   const { name, email, phone, comment } = req.body;
   let { date, time } = req.body;
   let amPm = time.slice(time.length - 2, time.length);
-  if (amPm === "PM" && Number(time.slice(0, 2)) > 12) {
+  if (amPm === "PM" && Number(time.slice(0, 2)) !== 12) {
     let hour = (Number(time.slice(0, 2)) + 12).toString().padStart(2, "0");
     time = hour + time.slice(2);
   }

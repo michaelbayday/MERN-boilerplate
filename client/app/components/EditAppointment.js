@@ -9,14 +9,21 @@ const EditAppointmentModal = ({
   toggleEditModal,
   currentAppointment,
   storeUserAppointmentInformation,
-  editCurrentDate
+  loadAllAppointments,
+  editCurrentDate,
+  admin
 }) => {
   const date = moment(currentAppointment.date).toDate();
   const comment = currentAppointment.comment;
   const time = currentAppointment.time
     ? moment(currentAppointment.time, "HH:mm").format("hh:mm A")
     : "8:00 AM";
-
+  let loadAppointments = storeUserAppointmentInformation;
+  let loadUrl = `/api/appointments/user?name=${currentAppointment.customerName}&email=${currentAppointment.customerEmail}`;
+  if (admin) {
+    loadAppointments = loadAllAppointments;
+    loadUrl = "api/appointments";
+  }
   const editAppointment = event => {
     event.preventDefault();
     const form = event.target;
@@ -32,15 +39,12 @@ const EditAppointmentModal = ({
     })
       .then(response => response.json())
       .then(data => {
-        fetch(
-          `/api/appointments/user?name=${currentAppointment.customerName}&email=${currentAppointment.customerEmail}`,
-          {
-            headers: { "Content-Type": "application/json" }
-          }
-        )
+        fetch(loadUrl, {
+          headers: { "Content-Type": "application/json" }
+        })
           .then(resp => resp.json())
           .then(appointments => {
-            storeUserAppointmentInformation(appointments);
+            loadAppointments(appointments);
             toggleEditModal(false);
             const twilioInformation = {
               Body: `This is confirming your appointment on ${moment(
@@ -101,15 +105,12 @@ const EditAppointmentModal = ({
     })
       .then(res => res.json())
       .then(response => {
-        fetch(
-          `/api/appointments/user?name=${currentAppointment.customerName}&email=${currentAppointment.customerEmail}`,
-          {
-            headers: { "Content-Type": "application/json" }
-          }
-        )
+        fetch(loadUrl, {
+          headers: { "Content-Type": "application/json" }
+        })
           .then(resp => resp.json())
           .then(appointments => {
-            storeUserAppointmentInformation(appointments);
+            loadAppointments(appointments);
             toggleEditModal(false);
             const twilioInformation = {
               Body: `This is confirming your appointment cancellation on ${moment(

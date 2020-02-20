@@ -4,7 +4,8 @@ const initialState = {
   showUserLookupModal: false,
   showEditModal: false,
   userAppointments: {},
-  currentAppointment: {}
+  currentAppointment: {},
+  appointments: {}
 };
 
 const appointmentReducer = (state = initialState, action) => {
@@ -39,12 +40,22 @@ const appointmentReducer = (state = initialState, action) => {
         userAppointments: appointments
       };
     case types.STORE_APPOINTMENT_INFORMATION:
+      console.log();
+      const appointmentReference = action.payload.admin
+        ? state.appointments
+        : state.userAppointments;
+
       return {
         ...state,
         currentAppointment: Object.assign(
           {},
-          state.userAppointments[action.payload]
+          appointmentReference[action.payload.id]
         )
+      };
+    case types.LOAD_ALL_APPOINTMENTS:
+      return {
+        ...state,
+        appointments: Object.assign({}, action.payload)
       };
     default:
       return state;

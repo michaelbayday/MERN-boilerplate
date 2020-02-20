@@ -12,12 +12,15 @@ module.exports = app => {
       res.json(res.locals.finalAppointments);
     }
   );
-  app.get("/api/appointments", (req, res, next) => {
-    Appointment.find({})
-      .exec()
-      .then(appointments => res.json(appointments))
-      .catch(err => next(err));
-  });
+  app.get(
+    "/api/appointments",
+    appointmentControllers.getAppointments,
+    appointmentControllers.getUsers,
+    appointmentControllers.createAppointmentsObject,
+    (req, res, next) => {
+      res.json(res.locals.finalAppointments);
+    }
+  );
 
   app.put(
     "/api/appointments/:id",

@@ -17,8 +17,8 @@ const mapDispatchToProps = dispatch => {
     toggleEditModal: show => {
       dispatch(actions.toggleEditModal(show));
     },
-    storeAppointmentInformation: id => {
-      dispatch(actions.storeAppointmentInformation(id));
+    storeAppointmentInformation: (id, admin) => {
+      dispatch(actions.storeAppointmentInformation(id, admin));
     },
     storeUserAppointmentInformation: array => {
       dispatch(actions.storeUserAppointmentInformation(array));
@@ -43,6 +43,7 @@ const UserManageAppointmentsComponent = props => {
         currentAppointment={props.currentAppointment}
         storeUserAppointmentInformation={props.storeUserAppointmentInformation}
         editCurrentDate={props.editCurrentDate}
+        admin={false}
       />
     </>
   );
