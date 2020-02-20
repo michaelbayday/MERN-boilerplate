@@ -9,8 +9,11 @@ const ListComponent = ({
 }) => {
   const listItems = [];
   for (let id in appointments) {
+    console.log(appointments[id].time);
+    console.log(moment(appointments[id].time, "hh:mm").format("hh:mm A"));
     listItems.push(
       <ListGroup.Item
+        action
         onClick={() => {
           storeAppointmentInformation(id);
           toggleEditModal(true);

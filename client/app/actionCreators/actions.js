@@ -35,6 +35,13 @@ export const storeAppointmentInformation = id => {
   };
 };
 
+export const editCurrentDate = date => {
+  return {
+    type: types.EDIT_CURRENT_DATE,
+    payload: date
+  };
+};
+
 // export const loadRecipes = () => {
 //   return {
 //     type: types.LOAD_RECIPES

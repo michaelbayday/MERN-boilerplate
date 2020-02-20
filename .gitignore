@@ -4,6 +4,9 @@ dist/
 # Config file
 config/config.js
 
+#API key
+environment.js
+
 # Node stuff
 node_modules
 .npm
@@ -12,6 +15,7 @@ node_modules
 logs
 *.log
 npm-debug.log*
+package-lock.json
 
 # OS stuff
 Desktop.ini

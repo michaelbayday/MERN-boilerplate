@@ -2,28 +2,27 @@ import React, { useState } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
 import DatePicker from "react-date-picker";
 import moment from "moment";
+import { username, password } from "../../environment";
 
 const EditAppointmentModal = ({
   show,
   toggleEditModal,
   currentAppointment,
-  storeUserAppointmentInformation
+  storeUserAppointmentInformation,
+  editCurrentDate
 }) => {
-  const date = currentAppointment.date
-    ? moment(currentAppointment.date).toDate()
-    : new Date();
-  const [dateField, setDate] = useState(moment(date).toDate());
-  console.log("dateField", dateField);
-
+  const date = moment(currentAppointment.date).toDate();
+  const comment = currentAppointment.comment;
   const time = currentAppointment.time
     ? moment(currentAppointment.time, "HH:mm").format("hh:mm A")
     : "8:00 AM";
+
   const editAppointment = event => {
     event.preventDefault();
     const form = event.target;
     const appointmentBody = {
       time: form.formTime.value,
-      date: dateField,
+      date: date,
       comment: form.formComments.value
     };
     fetch(`/api/appointments/${currentAppointment._id}`, {
@@ -45,7 +44,7 @@ const EditAppointmentModal = ({
             toggleEditModal(false);
             const twilioInformation = {
               Body: `This is confirming your appointment on ${moment(
-                dateField
+                date
               ).format("MMMM Do YYYY")} at ${appointmentBody.time}`,
               To: currentAppointment.customerPhone,
               From: "+14243873507"
@@ -60,8 +59,6 @@ const EditAppointmentModal = ({
             }
             formBody = formBody.join("&");
             let headers = new Headers();
-            let username = "AC63fbb74c462c353b2ce5fe82a343534c";
-            let password = "d5303e80bbede54b55bc3f5147391595";
             headers.set(
               "Authorization",
               "Basic " + btoa(username + ":" + password)
@@ -94,6 +91,76 @@ const EditAppointmentModal = ({
         console.log(err);
       });
   };
+
+  const deleteAppointment = event => {
+    event.preventDefault();
+    const time = document.querySelector("#formTime").value;
+    fetch(`/api/appointments/${currentAppointment._id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(res => res.json())
+      .then(response => {
+        fetch(
+          `/api/appointments/user?name=${currentAppointment.customerName}&email=${currentAppointment.customerEmail}`,
+          {
+            headers: { "Content-Type": "application/json" }
+          }
+        )
+          .then(resp => resp.json())
+          .then(appointments => {
+            storeUserAppointmentInformation(appointments);
+            toggleEditModal(false);
+            const twilioInformation = {
+              Body: `This is confirming your appointment cancellation on ${moment(
+                date
+              ).format("MMMM Do YYYY")} at ${time}`,
+              To: currentAppointment.customerPhone,
+              From: "+14243873507"
+            };
+            let formBody = [];
+            for (let property in twilioInformation) {
+              const encodedKey = encodeURIComponent(property);
+              const encodedValue = encodeURIComponent(
+                twilioInformation[property]
+              );
+              formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            let headers = new Headers();
+            headers.set(
+              "Authorization",
+              "Basic " + btoa(username + ":" + password)
+            );
+            headers.set(
+              "Content-Type",
+              "application/x-www-form-urlencoded;charset=UTF-8"
+            );
+            fetch(
+              "https://api.twilio.com/2010-04-01/Accounts/AC63fbb74c462c353b2ce5fe82a343534c/Messages.json",
+              {
+                method: "POST",
+                body: formBody,
+                headers: headers
+              }
+            )
+              .then(res => res.json())
+              .then(data => {
+                console.log("successful deletion");
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   return (
     <Modal
       show={show}
@@ -114,6 +181,7 @@ const EditAppointmentModal = ({
           <Form.Group controlId="formName">
             <Form.Label>Name:</Form.Label>
             <Form.Control
+              disabled
               type="name"
               placeholder="Roger Stone"
               value={currentAppointment.customerName}
@@ -123,6 +191,7 @@ const EditAppointmentModal = ({
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control
+              disabled
               type="email"
               placeholder="Enter email"
               value={currentAppointment.customerEmail}
@@ -135,6 +204,7 @@ const EditAppointmentModal = ({
           <Form.Group controlId="formPhoneNumber">
             <Form.Label>Phone Number:</Form.Label>
             <Form.Control
+              disabled
               type="phone"
               placeholder="888-888-8888"
               value={currentAppointment.customerPhone}
@@ -148,9 +218,10 @@ const EditAppointmentModal = ({
                 <br />
                 <DatePicker
                   calendarType="US"
-                  value={dateField}
+                  value={date}
                   format="MM-dd-y"
-                  onChange={date => setDate(date)}
+                  onChange={val => editCurrentDate(val)}
+                  minDate={new Date()}
                 />
               </Form.Group>
               <Form.Group controlId="formTime">
@@ -187,11 +258,18 @@ const EditAppointmentModal = ({
             <Form.Control
               type="text"
               placeholder="Special Instructions"
-              value={currentAppointment.comment}
+              defaultValue={comment}
             />
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
+          <Button
+            type="button"
+            className="btn btn-danger"
+            onClick={deleteAppointment}
+          >
+            Cancel Appointment
+          </Button>
           <Button type="submit">Edit Appointment</Button>
         </Modal.Footer>
       </Form>

@@ -3,11 +3,20 @@ const moment = require("moment");
 
 const appointmentControllers = {};
 
+appointmentControllers.deleteAppointment = (req, res, next) => {
+  Appointment.findOneAndDelete({ _id: req.params.id }, (err, result) => {
+    if (err || result === null) {
+      res.locals.error = "Updating appointment failed";
+    }
+    return next();
+  });
+};
+
 appointmentControllers.updateAppointment = (req, res, next) => {
   const { comment } = req.body;
   let { date, time } = req.body;
   let amPm = time.slice(time.length - 2, time.length);
-  if (amPm === "PM") {
+  if (amPm === "PM" && Number(time.slice(0, 2)) > 12) {
     let hour = (Number(time.slice(0, 2)) + 12).toString().padStart(2, "0");
     time = hour + time.slice(2);
   }
@@ -20,7 +29,7 @@ appointmentControllers.updateAppointment = (req, res, next) => {
     { _id: req.params.id },
     { time, date, dateTime, comment },
     (err, result) => {
-      if (err) {
+      if (err || result === null) {
         res.locals.error = "Updating appointment failed";
       }
       return next();
@@ -102,7 +111,7 @@ appointmentControllers.createAppointment = (req, res, next) => {
   const { name, email, phone, comment } = req.body;
   let { date, time } = req.body;
   let amPm = time.slice(time.length - 2, time.length);
-  if (amPm === "PM") {
+  if (amPm === "PM" && Number(time.slice(0, 2)) > 12) {
     let hour = (Number(time.slice(0, 2)) + 12).toString().padStart(2, "0");
     time = hour + time.slice(2);
   }

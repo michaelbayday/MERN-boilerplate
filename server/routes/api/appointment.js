@@ -23,7 +23,6 @@ module.exports = app => {
     "/api/appointments/:id",
     appointmentControllers.updateAppointment,
     (req, res, next) => {
-      console.log("finalmiddleware");
       if (res.locals.error) {
         res.status(400).json(res.locals.error);
       } else {
@@ -43,6 +42,24 @@ module.exports = app => {
       }
     }
   );
+  app.delete(
+    "/api/appointments/:id",
+    appointmentControllers.deleteAppointment,
+    (req, res, next) => {
+      if (res.locals.error) {
+        res.status(400).json(res.locals.error);
+      } else {
+        res.status(200).json("Successfully Deleted Appointment");
+      }
+    }
+  );
+
+  app.get("/api/appointments", (req, res, next) => {
+    Appointment.find({})
+      .exec()
+      .then(appointments => res.json(appointments))
+      .catch(err => next(err));
+  });
 
   // app.delete("/api/appointments/:id", function(req, res, next) {
   //   Counter.findOneAndDelete({ _id: req.params.id })

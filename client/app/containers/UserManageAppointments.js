@@ -22,6 +22,9 @@ const mapDispatchToProps = dispatch => {
     },
     storeUserAppointmentInformation: array => {
       dispatch(actions.storeUserAppointmentInformation(array));
+    },
+    editCurrentDate: date => {
+      dispatch(actions.editCurrentDate(date));
     }
   };
 };
@@ -39,6 +42,7 @@ const UserManageAppointmentsComponent = props => {
         show={props.showEditModal}
         currentAppointment={props.currentAppointment}
         storeUserAppointmentInformation={props.storeUserAppointmentInformation}
+        editCurrentDate={props.editCurrentDate}
       />
     </>
   );

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
 import DatePicker from "react-date-picker";
 import moment from "moment";
+import { username, password } from "../../environment";
 
 const AddAppointmentModal = ({ show, toggleAppointmentModal }) => {
   const submitAppointment = event => {
@@ -37,8 +38,6 @@ const AddAppointmentModal = ({ show, toggleAppointmentModal }) => {
         }
         formBody = formBody.join("&");
         let headers = new Headers();
-        let username = "AC63fbb74c462c353b2ce5fe82a343534c";
-        let password = "d5303e80bbede54b55bc3f5147391595";
         headers.set(
           "Authorization",
           "Basic " + btoa(username + ":" + password)
@@ -112,6 +111,7 @@ const AddAppointmentModal = ({ show, toggleAppointmentModal }) => {
                   value={dateField}
                   format="MM-dd-y"
                   onChange={date => setDate(date)}
+                  minDate={new Date()}
                 />
               </Form.Group>
               <Form.Group controlId="formTime">
