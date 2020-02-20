@@ -36,6 +36,7 @@ const UserManageAppointmentsComponent = props => {
         toggleEditModal={props.toggleEditModal}
         appointments={props.appointments}
         storeAppointmentInformation={props.storeAppointmentInformation}
+        admin={false}
       />
       <EditAppointmentModal
         toggleEditModal={props.toggleEditModal}

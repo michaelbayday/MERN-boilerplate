@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import DatePicker from "react-date-picker";
-import moment from "moment";
 
 const UserLookupModal = ({
   show,
