@@ -5,15 +5,17 @@ import moment from "moment";
 const ListComponent = ({
   appointments,
   toggleEditModal,
-  storeAppointmentInformation
+  storeAppointmentInformation,
+  admin
 }) => {
   const listItems = [];
+  console.log(appointments);
   for (let id in appointments) {
     listItems.push(
       <ListGroup.Item
         action
         onClick={() => {
-          storeAppointmentInformation(id, true);
+          storeAppointmentInformation(id, admin);
           toggleEditModal(true);
         }}
         eventKey={id}
