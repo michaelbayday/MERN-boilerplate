@@ -23,7 +23,7 @@ const UserLookupModal = ({
       .then(res => res.json())
       .then(appointments => {
         storeUserAppointmentInformation(appointments);
-        history.push("/managemyappointments");
+        history.push("/myappointments");
       })
       .catch(err => {
         console.log(err);
